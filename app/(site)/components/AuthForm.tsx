@@ -8,6 +8,11 @@ import AuthSocialButton from "./AuthSocialButton";
 
 import { PiGithubLogoBold } from "react-icons/pi";
 import { PiGoogleLogoBold } from "react-icons/pi";
+import { PiFacebookLogoBold } from "react-icons/pi";
+
+import axios from "axios";
+import {toast} from "react-hot-toast";
+import {signIn} from "next-auth/react";
 
 type Variant = "login" | "register";
 
@@ -40,16 +45,40 @@ const AuthForm = () => {
     setIsLoading(true);
 
     if (variant === "register") {
-      // await fetch register post
+      axios.post('/api/register',data)
+      .catch(() => toast.error("Something went wrong ..."))
+      .finally(() => setIsLoading(false))
     }
     if (variant === "login") {
-      // next auth sign in
+      signIn('credentials',{
+        ...data,
+        redirect:false,
+      })
+      .then((callback)=>{
+        if(callback?.error){
+          toast.error('Wrong creds')
+        }
+        if(callback?.ok && !callback?.error)(
+          toast.success('Ya in !')
+        )
+      })
+      .finally(() => setIsLoading(false));
     }
   };
 
   const socialAuthEvent = (event: string) => {
     setIsLoading(true);
-    // next auth sign in
+    
+    signIn(event,{redirect:false})
+    .then((callback)=>{
+      if(callback?.error){
+        toast.error('Wrong creds')
+      }
+      if(callback?.ok &&callback?.error){
+        toast.success('Ya in !')
+      }
+    })
+    .finally(() => setIsLoading(false));
   };
 
   return (
@@ -103,6 +132,10 @@ const AuthForm = () => {
           <AuthSocialButton
             icon={PiGoogleLogoBold}
             onClick={() => socialAuthEvent("google")}
+          />
+          <AuthSocialButton
+            icon={PiFacebookLogoBold}
+            onClick={() => socialAuthEvent("facebook")}
           />
         </div>
 
