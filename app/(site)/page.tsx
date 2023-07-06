@@ -7,13 +7,14 @@ const page = () => {
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <Image
-          src="/images/logo.png"
-          className="mx-auto w-auo"
+          src="/images/logo2.png"
+          className="mx-auto w-auto"
           alt="logo"
-          height="96"
-          width="96"
+          height="64"
+          width='64'
+          priority={true}
         />
-        <h2 className="text-center text-3xl font-bold text-gray-900 tracking-tight">
+        <h2 className="text-center text-3xl font-bold text-gray-900 tracking-tight mt-6">
           Sign in to your account
         </h2>
       </div>
