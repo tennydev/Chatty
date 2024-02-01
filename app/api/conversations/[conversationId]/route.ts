@@ -1,6 +1,7 @@
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import { NextResponse } from "next/server";
 import prisma from "@/app/libs/prismadb";
+import { pusherServer } from "@/app/libs/pusher";
 
 interface IParams {
   conversationId?: string;
@@ -18,6 +19,7 @@ export async function DELETE(
       return new NextResponse('Unauthorized', { status:401 })
     }
     
+    // we need a list of users before deleting lol, mundane existence
     const existingConversation = await prisma.conversation.findUnique({
       where: {
         id: conversationId
@@ -39,6 +41,12 @@ export async function DELETE(
         }
       }
     });
+
+    existingConversation.users.forEach((user) => {
+      if (user.email) {
+        pusherServer.trigger(user.email, 'conversation:remove', existingConversation)
+      }
+    })
 
     return NextResponse.json(deletedConversation);
   } catch (error: any) {
