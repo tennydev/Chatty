@@ -23,9 +23,3 @@ export default async function handler(
   const authResponse = pusherServer.authorizeChannel(socketId, channel, data);
   return response.send(authResponse);
 };
-
-export const config = {
-  api: {
-    externalResolver: true,
-  },
-}
